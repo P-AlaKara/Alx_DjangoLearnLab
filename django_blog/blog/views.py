@@ -136,7 +136,7 @@ class SearchResultsView(ListView):
             ).distinct().order_by("-published_date")
         return Post.objects.none()
     
-class TagPostListView(ListView):
+class PostByTagListView(ListView):
     model = Post
     template_name = "blog/post_list.html"
     context_object_name = "posts"
