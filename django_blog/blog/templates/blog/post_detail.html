@@ -1,6 +1,14 @@
 <h2>{{ object.title }}</h2>
 <p>{{ object.content }}</p>
 <small>By {{ object.author }} on {{ object.published_date }}</small>
+<p>
+Tags:
+{% for tag in object.tags.all %}
+    <a href="{% url 'tag-posts' tag.slug %}">{{ tag.name }}</a>
+{% empty %}
+    No tags.
+{% endfor %}
+</p>
 
 <br><br>
 
