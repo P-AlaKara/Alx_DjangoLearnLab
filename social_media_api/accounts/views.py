@@ -10,6 +10,7 @@ from rest_framework.decorators import action
 from .models import Post
 from .serializers import PostSerializer
 from rest_framework.views import APIView
+from rest_framework import permissions
 
 User = get_user_model()
 
@@ -53,10 +54,11 @@ class ProfileView(generics.RetrieveAPIView):
     def get_object(self):
         return self.request.user
 
+CustomUser = get_user_model()
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     @action(detail=True, methods=['post'])
     def follow(self, request, pk=None):
