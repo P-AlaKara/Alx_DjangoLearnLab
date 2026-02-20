@@ -53,8 +53,10 @@ class ProfileView(generics.RetrieveAPIView):
         return self.request.user
 
 CustomUser = get_user_model()
+users = CustomUser.objects.all()
+
 class FollowUserView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, user_id):
         try:
