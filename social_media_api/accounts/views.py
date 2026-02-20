@@ -8,6 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from .serializers import RegisterSerializer, LoginSerializer, UserSerializer
 from rest_framework.decorators import action
 from rest_framework import permissions
+from rest_framework.views import APIView
 
 User = get_user_model()
 
@@ -52,23 +53,30 @@ class ProfileView(generics.RetrieveAPIView):
         return self.request.user
 
 CustomUser = get_user_model()
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = CustomUser.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+class FollowUserView(APIView):
+    permission_classes = [IsAuthenticated]
 
-    @action(detail=True, methods=['post'])
-    def follow(self, request, pk=None):
-        target_user = self.get_object()
+    def post(self, request, user_id):
+        try:
+            target_user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return Response({"error": "User not found"}, status=404)
 
         if target_user == request.user:
-            return Response({"error": "You cannot follow yourself."}, status=400)
+            return Response({"error": "You cannot follow yourself"}, status=400)
 
         request.user.following.add(target_user)
-        return Response({"message": f"You are now following {target_user.username}."})
+        return Response({"message": f"You are now following {target_user.username}"})
 
-    @action(detail=True, methods=['post'])
-    def unfollow(self, request, pk=None):
-        target_user = self.get_object()
+
+class UnfollowUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, user_id):
+        try:
+            target_user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return Response({"error": "User not found"}, status=404)
+
         request.user.following.remove(target_user)
-        return Response({"message": f"You unfollowed {target_user.username}."})
+        return Response({"message": f"You unfollowed {target_user.username}"})
