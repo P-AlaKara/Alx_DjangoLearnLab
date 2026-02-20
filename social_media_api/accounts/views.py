@@ -7,9 +7,6 @@ from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 from .serializers import RegisterSerializer, LoginSerializer, UserSerializer
 from rest_framework.decorators import action
-from .models import Post
-from .serializers import PostSerializer
-from rest_framework.views import APIView
 from rest_framework import permissions
 
 User = get_user_model()
@@ -75,15 +72,3 @@ class UserViewSet(viewsets.ModelViewSet):
         target_user = self.get_object()
         request.user.following.remove(target_user)
         return Response({"message": f"You unfollowed {target_user.username}."})
-
-class FeedView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        following_users = request.user.following.all()
-        posts = Post.objects.filter(
-            author__in=following_users
-        ).order_by('-created_at')
-
-        serializer = PostSerializer(posts, many=True)
-        return Response(serializer.data)
