@@ -58,10 +58,7 @@ class LikePostView(APIView):
         except Post.DoesNotExist:
             return Response({"error": "Post not found"}, status=404)
 
-        like, created = Like.objects.get_or_create(
-            user=request.user,
-            post=post
-        )
+        like, created = Like.objects.get_or_create(user=request.user, post=post)
 
         if not created:
             return Response({"message": "Already liked"}, status=400)
