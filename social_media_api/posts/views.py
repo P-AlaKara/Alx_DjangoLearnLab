@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 # Create your views here.
-from rest_framework import viewsets, filters, permissions
+from rest_framework import viewsets, filters, permissions, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
@@ -54,7 +54,7 @@ class LikePostView(APIView):
 
     def post(self, request, pk):
         try:
-            post = Post.objects.get(pk=pk)
+            post = generics.get_object_or_404(Post, pk=pk)
         except Post.DoesNotExist:
             return Response({"error": "Post not found"}, status=404)
 
